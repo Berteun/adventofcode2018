@@ -1,4 +1,4 @@
-#include <list>
+#include <deque>
 #include <fstream>
 #include <iostream>
 #include <map>
@@ -15,9 +15,9 @@ std::tuple<int, int> read_input() {
 }
 
 
-void print_progress(int cur_round, int players, std::list<int>::const_iterator current, std::list<int> const& marbles) {
+void print_progress(int cur_round, int players, std::deque<int> const& marbles) {
 	std::cout << "[" << cur_round << "/" << (cur_round % players) << "] " 
-		<< std::distance(marbles.begin(), current) << " (" << *current << ") [" ;
+		<< " (" << marbles.front() << ") [" ;
 	std::string sep = "";
 	for (auto m : marbles) {
 		std::cout << sep << m;
@@ -26,37 +26,39 @@ void print_progress(int cur_round, int players, std::list<int>::const_iterator c
 	std::cout << "]\n";
 }
 
+void rotate_left(std::deque<int>& marbles, int n) {
+	while (n--) {
+		marbles.push_back(marbles.front());
+		marbles.pop_front();
+	}
+}
+
+void rotate_right(std::deque<int>& marbles, int n) {
+	while (n--) {
+		marbles.push_front(marbles.back());
+		marbles.pop_back();
+	}
+}
+
 long play_game(int players, int rounds) {
 	std::map<int,long> scores;
-	std::list<int> marbles = {0};
-	auto current = marbles.begin();
+	std::deque<int> marbles = {0};
 
 	for (int cur_round = 1; cur_round <= rounds; ++cur_round) {
-		if (cur_round % 23 == 0) {
-			for (auto i = 0; i < 7; i++) {
-				if (current == marbles.begin())
-					current = marbles.end();
-				--current;
-			}
-			scores[cur_round % players] += cur_round + *current;
-			current = marbles.erase(current);
-			if (current == marbles.end())
-				current = marbles.begin();
+		if (cur_round % 23) {
+			rotate_left(marbles, 2);
+			marbles.push_front(cur_round);
 		} else {
-			for (auto i = 0; i < 2; i++) {
-				++current;
-				if (current == marbles.end())
-					current = marbles.begin();
-			}
-			current = marbles.insert(current, cur_round);
+			rotate_right(marbles, 7);
+			scores[cur_round % players] += cur_round + marbles.front();
+			marbles.pop_front();
 		}
 
 		//print_progress(cur_round, players, current, marbles);
 	}
-	long max_s = 0;
-	for (auto [p,s] : scores)
-		max_s = std::max(max_s, s);
-	return max_s;
+
+	return std::max_element(scores.begin(), scores.end(),
+		[](auto p, auto q) { return p.second < q.second; })->second;
 }
 
 int main() {
@@ -65,4 +67,3 @@ int main() {
 	std::cout << play_game(players, rounds) << "\n";
 	std::cout << play_game(players, rounds*100) << "\n";
 }
-
