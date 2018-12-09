@@ -16,12 +16,9 @@ std::tuple<int, int> read_input() {
 
 
 void print_progress(int cur_round, int players, std::deque<int> const& marbles) {
-	std::cout << "[" << cur_round << "/" << (cur_round % players) << "] " 
-		<< " (" << marbles.front() << ") [" ;
-	std::string sep = "";
+	std::cout << "[" << cur_round << "/" << (cur_round % players) << "] [" ;
 	for (auto m : marbles) {
-		std::cout << sep << m;
-		sep = ", ";
+		std::cout << m << ", ";
 	}
 	std::cout << "]\n";
 }
@@ -54,7 +51,7 @@ long play_game(int players, int rounds) {
 			marbles.pop_front();
 		}
 
-		//print_progress(cur_round, players, current, marbles);
+		//print_progress(cur_round, players, marbles);
 	}
 
 	return std::max_element(scores.begin(), scores.end(),
