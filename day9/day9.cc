@@ -59,8 +59,7 @@ long play_game(int players, int rounds) {
 }
 
 int main() {
-	int players, rounds;
-	std::tie(players, rounds) = read_input();
+	auto [players, rounds] = read_input();
 	std::cout << play_game(players, rounds) << "\n";
 	std::cout << play_game(players, rounds*100) << "\n";
 }
