@@ -75,7 +75,6 @@ def find_time(graph, n_workers, offset):
 
 def run():
     steps = read_input()
-    #steps = [('C', 'A'), ('C', 'F'), ('A', 'B'), ('A', 'D'), ('B', 'E'), ('D', 'E'), ('F', 'E')]
     graph = build_graph(steps)
     order = find_order(graph)
     print ''.join(order)
