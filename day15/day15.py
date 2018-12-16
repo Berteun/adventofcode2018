@@ -18,7 +18,6 @@ HP_REDUCE = {
         'G' : 12,
 }
 
-
 PRINT_BOARDS = False
 
 def walk(board, filter=None):
@@ -54,7 +53,6 @@ def print_board_attack(board, hitpoints, unit, target):
             sys.stdout.write(" HP {} -> {}".format(hp, hp - HP_REDUCE[board[ty][tx]]))
         if (x == len(board[y]) - 1):
             sys.stdout.write("\n")
-    #time.sleep(0.2)
 
 def print_reachable_board(board, start, range_list, reachable):
     if not PRINT_BOARDS:
@@ -85,7 +83,6 @@ def print_reachable_board(board, start, range_list, reachable):
             sys.stdout.write(colors[cell])
         if (x == len(board[y]) - 1):
             sys.stdout.write("\n")
-    #time.sleep(0.2)
 
 def read_input():
     return [list(l.strip('\n')) for l in open("input.txt")]
