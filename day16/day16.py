@@ -23,10 +23,11 @@ opcodes = {
 
 def read_input():
     part1, part2 = open("input.txt").read().split("\n\n\n\n")
-    samples = [Sample(before=[int(n) for n in s.split("\n")[0][9:-1].split(', ')],
-               opcode=[int(n) for n in s.split("\n")[1].split()],
-               after=[int(n) for n in s.split("\n")[2][9:-1].split(', ')])
-               for s in part1.split("\n\n")]
+    samples = [Sample(
+                    before=[int(n) for n in s.split("\n")[0][9:-1].split(', ')],
+                    opcode=[int(n) for n in s.split("\n")[1].split()],
+                    after=[int(n) for n in s.split("\n")[2][9:-1].split(', ')]
+               ) for s in part1.split("\n\n")]
     program = [tuple(map(int, l.split())) for l in part2.split("\n") if l.strip()]
     return samples, program
 
@@ -34,23 +35,21 @@ def count_three_or_more(samples):
     return sum(sum(s.after == opcodes[op](*s.opcode[1:], s.before[:]) for op in opcodes) > 2 for s in samples)
 
 def make_opcodes_map(samples):
-    return { s.opcode[0] : set(op for op,f in opcodes.items() if f(*s.opcode[1:], s.before[:]) == s.after) for s in samples }
+    return {s.opcode[0] : [op for op,f in opcodes.items() if f(*s.opcode[1:], s.before[:]) == s.after] for s in samples}
 
 def resolve_map(opcode_map):
-    while any(len(l) > 1 for l in opcode_map.values()):
-        for single, name in ((c,s.copy().pop()) for c,s in opcode_map.items() if len(s) == 1):
-            for multiple in (c for c in opcode_map.values() if len(c) > 1):
-                    multiple.discard(name)
-    return { k : opcode_map[k].pop() for k in opcode_map }
+    for name in (s[0] for s in list(opcode_map.values())*15 if len(s) == 1):
+        for multiple in (c for c in opcode_map.values() if len(c) > 1 and name in c):
+                multiple.remove(name)
+    return {k : v[0] for k,v in opcode_map.items()}
 
 def evaluate(program, opm, registers):
-    sum(len(opcodes[opm[code]](A, B, C, registers)) for (code, A, B, C) in program)
-    return registers
+    return [(opcodes[opm[code]](A, B, C, registers)) for (code, A, B, C) in program][-1][0]
 
 def run():
     samples,program = read_input()
     print(count_three_or_more((samples)))
-    print(evaluate(program, resolve_map(make_opcodes_map(samples)), [0,0,0,0])[0])
+    print(evaluate(program, resolve_map(make_opcodes_map(samples)), [0,0,0,0]))
 
 if __name__ == '__main__':
     run()
