@@ -1,0 +1,5 @@
+My solutions to [Advent of Code 2018](https://adventofcode.com/2018).
+
+A mix of C++ & Python, and two in R. Use them however you want.
+
+There are no external dependencies, except for Day 23 which requires Z3.
